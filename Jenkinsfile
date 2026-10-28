@@ -4,23 +4,22 @@ pipeline {
     stages {
         stage('Clean Old Deployment') {
             steps {
-                // If you install Jenkins natively on Windows, change 'sh' to 'bat'
-                sh 'docker compose down'
+                // Use 'bat' for native Windows execution
+                bat 'docker compose down'
             }
         }
 
         stage('Deploy with Docker Compose') {
             steps {
-                // This command reads your docker-compose.yml, builds the Flask image, and starts both containers
-                sh 'docker compose up -d --build'
+                bat 'docker compose up -d --build'
             }
         }
 
         stage('Verify Health') {
             steps {
-                // Pauses to let the database initialize and checks the /health endpoint
+                // Sleep 15 seconds, then test endpoint using PowerShell
                 sleep 15
-                sh 'curl -s http://localhost:5000/health'
+                powershell 'Invoke-RestMethod -Uri http://localhost:5000/health'
             }
         }
     }
